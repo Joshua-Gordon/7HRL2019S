@@ -63,5 +63,4 @@ openCorners ts ft = let w = length ts
                     in [[ if neighbors x y ts == 3 then Floor ft else ts!!x!!y | y <- [0..h-1]] | x <- [0..w-1]]
 
 getSlice :: Int -> Int -> [[Tile]] -> [[Tile]]
-getSlice x y ts = let rows = Prelude.map (drop y) ts
-                  in drop x rows
+getSlice x y = drop x . map (drop y) 

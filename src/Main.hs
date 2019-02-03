@@ -2,6 +2,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
+import Term
 import Zone
 import Map
 import World
@@ -26,10 +27,12 @@ main = do
         entities = []
     }
     player <- getStartPlayer
-    let world = World {
+    let world1 = World {
         time = 0.0,
         zone = zone,
         player = player,
         score = 0
     }
-    playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 world renderWorld handleInput updateWorld
+    let term = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" [] world1
+    playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 term (renderWorld . world) (\e t -> ( ((handleInput e (world t)) >>= (\w -> return t{world = w})))) (tStep)
+
