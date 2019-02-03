@@ -76,8 +76,3 @@ parseAtk = (string "atk") *> fmap Atk ((string "" *> pure Nothing) <|>  string "
 parseLs = string "ls"  *> pure Ls
 parseSel = string "sel " *> (fmap Sel (munch (const True)))
 parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> munch (const True))
-
-renderTerminal :: Term -> IO Picture
-renderTerminal = Pictures [back,text]
-                 where
-                    back = 

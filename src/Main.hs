@@ -3,6 +3,7 @@ import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
 import Term
+import Entity
 import Zone
 import Map
 import World
@@ -36,12 +37,13 @@ main = do
         score = 0
     }
     let term = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" [] world1
-    playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 term (renderWorld . world) (\e t -> ( ((handleInput e (world t)) >>= (\w -> return t{world = w})))) (tStep)
+    playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 term (renderWorld) (\e t -> ( ((handleInput e (world t)) >>= (\w -> return t{world = w})))) (tStep)
 
 renderWorld :: Term -> IO Picture
 renderWorld t = let w = world t
                     txt = buff t
+                    txtPic = [ translate (-360) (-240+20*i) . scale (0.3) (0.3) $ Pictures $ map text txt
                     etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
                     tilerenders=renderTiles (tiles . _map . zone $ w)
-                in return $ Pictures $ tilerenders:(renderPlayer (player w) (time w)):erenders
+                in return $ Pictures $ (tilerenders:(renderPlayer (player w) (time w)):erenders) ++ [txtPic]
