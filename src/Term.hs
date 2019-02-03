@@ -24,6 +24,9 @@ data Term = Term {
   world :: World
 } 
 
+clearBuff :: Term -> Term
+clearBuff t = t{buff=(addBuff "" (buff t))}
+
 thicAddBuff :: [String] -> [String] -> [String]
 thicAddBuff xs ys = take 5 (xs ++ ys)
 
@@ -46,7 +49,7 @@ handleCmd :: Command -> Term -> IO Term
 handleCmd (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
 handleCmd Nop t         = updateWorld 0 (world t) >>= (\w -> return t{world = w}) 
 handleCmd Ls t          = return t{buff=(thicAddBuff (map showEnt (entities . zone . world $ t)) (buff t) )}
-handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{world = w})
+handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{buff=addBuff " " (buff t),world = w})
   where
     w = world t
     p = player w
