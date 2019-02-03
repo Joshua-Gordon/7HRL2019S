@@ -79,6 +79,7 @@ parseSel = string "sel " *> (fmap Sel (munch (const True)))
 parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> munch (const True))
 
 handleInput :: Event -> Term -> IO Term
-handleInput e term = return $ case e of
-                                (EventKey (Char c) Up _ _) -> term{buff=(c:(head $ buff term)) : tail (buff term)}
-                                _ -> term
+handleInput e term = case e of
+                            (EventKey (Char c) Up _ _) -> return term{buff=((head $ buff term)++[c]) : tail (buff term)}
+                            (EventKey (SpecialKey KeyEnter) Up _ _) -> process 0.0 (head $ buff term) term
+                            _ -> return term
