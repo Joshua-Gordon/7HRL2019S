@@ -1,25 +1,24 @@
 module Stats where
 
 data Stats = Stats {
-	HP :: Integer,
-	AC :: Integer,
-	DEF :: Integer,
-	STR :: Integer,
-	DEX :: Integer,
-	INT :: Integer,
-	VIS :: Integer,
+	_HP :: Integer,
+	_AC :: Integer,
+	_DEF :: Integer,
+	_STR :: Integer,
+	_DEX :: Integer,
+	_INT :: Integer,
+	_VIS :: Integer
 }
 
 baseStats :: Stats
-
 baseStats = Stats {
-	HP = 10,
-	AC = 10,
-	DEF = 10,
-	STR = 10,
-	DEX = 10,
-	INT = 10,
-	VIS = 10,
+	_HP = 10,
+	_AC = 10,
+	_DEF = 10,
+	_STR = 10,
+	_DEX = 10,
+	_INT = 10,
+	_VIS = 10
 }
 
 noChange :: Stats -> Stats

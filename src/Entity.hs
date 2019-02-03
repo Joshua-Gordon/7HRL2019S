@@ -45,7 +45,7 @@ data Entity = Entity {
 	lastMoveDir :: Dir.Dir,
 	lastMoveTime :: Float,
 	lastDamageTime :: Float,
-	curHP :: Integer,
+	curHP :: Integer
 }
 
 interpolating :: Float -> Entity -> Bool

@@ -13,19 +13,25 @@ data Item = Item {
 	slotting :: [Slot],
 	weaponClass :: WeaponClass,
 	damageDie :: Integer,
-	damageBonus :: Integer,
+	damageBonus :: Integer
 }
+
+instance Eq Item where
+    i == j = (name i) == (name j)
+
+instance Ord Item where
+    i <= j = (name i) <= (name j)
 
 data Stack = Stack {
 	item :: Item,
-	amount :: Integer,
+	amount :: Integer
 }
 
 combine :: Stack -> Stack -> Stack
 combine s1 s2 = s1{amount = (amount s1) + (amount s2)}
 
 data Inv = Inv {
-	stacks :: Map.Map Item Stack,
+	stacks :: Map.Map Item Stack
 }
 
 addStack :: Inv -> Stack -> Inv

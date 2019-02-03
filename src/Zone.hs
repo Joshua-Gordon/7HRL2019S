@@ -3,18 +3,14 @@ module Zone where
 import Graphics.Gloss
 import System.Random
 
-_TILESIZE :: Float
-_TILESIZE = fromIntegral 24
-
-sq :: Picture
-sq = Polygon [(-_TILESIZE/2,-_TILESIZE/2),(_TILESIZE/2,-_TILESIZE/2),(_TILESIZE/2,_TILESIZE/2),(-_TILESIZE/2,_TILESIZE/2)]
+import Entity
+import Consts
 
 data Tile = Floor Picture | Wall deriving Eq
 
 data Zone = Zone {
     tiles :: [[Tile]],
-    --entity list
-    score :: Integer
+    entities :: [Entity]
 }
 
 mkTiles :: StdGen -> Picture -> (Int,Int) -> [[Tile]]

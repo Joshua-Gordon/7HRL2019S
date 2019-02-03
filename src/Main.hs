@@ -4,11 +4,7 @@ import System.Random
 
 import Zone
 
-_WIDTH = 720
-_HEIGHT = 480
 
-globalTranslate :: Picture -> Picture
-globalTranslate p = Translate (-_WIDTH/2) (-_HEIGHT/2) p
 
 main :: IO ()
 main = do

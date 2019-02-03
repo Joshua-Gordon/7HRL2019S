@@ -1,5 +1,16 @@
 module Consts where
 
+import Graphics.Gloss
+
+_WIDTH = 720
+_HEIGHT = 480
+_TILESIZE :: Float
+_TILESIZE = fromIntegral 24
+
+sq :: Picture
+sq = Polygon [(-_TILESIZE/2,-_TILESIZE/2),(_TILESIZE/2,-_TILESIZE/2),(_TILESIZE/2,_TILESIZE/2),(-_TILESIZE/2,_TILESIZE/2)]
+
+
 walkCycleTime :: Float
 walkCycleTime = 0.5
 
