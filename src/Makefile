@@ -1,5 +1,5 @@
 main: Main.hs
-	ghc Main.hs
+	ghc -dynamic Main.hs
 
 clean:
 	rm *.hi *.o 
