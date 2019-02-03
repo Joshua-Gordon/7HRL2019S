@@ -24,8 +24,11 @@ data Term = Term {
   world :: World
 } 
 
+thicAddBuff :: [String] -> [String] -> [String]
+thicAddBuff xs ys = take 5 (xs ++ ys)
+
 addBuff :: String -> [String] -> [String]
-addBuff s b = take 20 (s:b)
+addBuff s b = take 5 (s:b)
 
 tStep :: Float -> Term -> IO Term
 tStep = const return
@@ -33,17 +36,17 @@ tStep = const return
 -- def :: Term
 -- def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []
 
-process :: Float -> String -> Term -> IO Term
-process f s t = maybe (print err *> return t{buff=addBuff err (buff t)}) (flip (handleCmd f) t) cmd
+process :: String -> Term -> IO Term
+process s t = maybe (return t{buff=addBuff "" . addBuff err $ (buff t)}) (flip handleCmd t) cmd
   where
     cmd = parse (doAliases (aliases t) s)
     err = "error " ++ s ++ " not a valid command"
 
-handleCmd :: Float -> Command -> Term -> IO Term
-handleCmd _ (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
-handleCmd f Nop t         = updateWorld f (world t) >>= (\w -> return t{world = w}) 
-handleCmd _ Ls t          = (sequence $ map (putStrLn . showEnt) (entities . zone . world $ t)) *> putStr "\n" *> return t
-handleCmd f (Move d) t    = updateWorld f nw >>= (\w -> return t{world = w})
+handleCmd :: Command -> Term -> IO Term
+handleCmd (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
+handleCmd Nop t         = updateWorld 0 (world t) >>= (\w -> return t{world = w}) 
+handleCmd Ls t          = return t{buff=(thicAddBuff (map showEnt (entities . zone . world $ t)) (buff t) )}
+handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{world = w})
   where
     w = world t
     p = player w
@@ -51,7 +54,7 @@ handleCmd f (Move d) t    = updateWorld f nw >>= (\w -> return t{world = w})
     ne = tryMove w d e
     np = p{entity=ne}
     nw = w{player=np}
-handleCmd _ _ t           = return t
+handleCmd _ t           = return t
 
 showEnt :: Entity -> String
 showEnt e = show (position e)
@@ -81,5 +84,5 @@ parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> mun
 handleInput :: Event -> Term -> IO Term
 handleInput e term = case e of
                             (EventKey (Char c) Up _ _) -> return term{buff=((head $ buff term)++[c]) : tail (buff term)}
-                            (EventKey (SpecialKey KeyEnter) Up _ _) -> process 0.0 (head $ buff term) term
+                            (EventKey (SpecialKey KeyEnter) Up _ _) -> process (head $ buff term) term
                             _ -> return term
