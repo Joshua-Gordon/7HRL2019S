@@ -4,6 +4,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 
 import Zone
+import Map
 import Player
 import Consts
 import Entity
@@ -21,7 +22,7 @@ globalTranslate p = Translate ((fromIntegral $ -_WIDTH)/2) ((fromIntegral $ -_HE
 renderWorld :: World -> IO Picture
 renderWorld w = let etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
-                in return $ Pictures $ erenders ++[renderTiles (tiles . zone $ w)]
+                in return $ Pictures $ erenders ++[renderTiles (tiles . _map . zone $ w)]
 
 handleInput :: Event -> World -> IO World
 handleInput e = return
