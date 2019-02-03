@@ -26,7 +26,7 @@ addBuff :: String -> [String] -> [String]
 addBuff s b = take 20 (s:b)
 
 tStep :: Float -> Term -> IO Term
-tStep f t = (putStr (prompt t)) *> getLine >>= flip (process f) t
+tStep f t = getLine >>= flip (process f) t
 
 -- def :: Term
 -- def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []
