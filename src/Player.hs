@@ -1,5 +1,7 @@
 module Player where
 
+import Debug.Trace
+
 import Graphics.Gloss
 
 import Data.Map
@@ -34,4 +36,4 @@ getStartPlayer = do
                    }
 
 renderPlayer :: Player -> Float -> Picture
-renderPlayer p f = draw (entity p) f
+renderPlayer p f = traceShow (position . entity $ p) draw (entity p) f
