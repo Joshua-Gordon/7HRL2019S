@@ -38,3 +38,10 @@ main = do
     let term = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" [] world1
     playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 term (renderWorld . world) (\e t -> ( ((handleInput e (world t)) >>= (\w -> return t{world = w})))) (tStep)
 
+renderWorld :: Term -> IO Picture
+renderWorld t = let w = world t
+                    txt = buff t
+                    etts = entities . zone $ w
+                    erenders = [draw e (time w) | e <- etts]
+                    tilerenders=renderTiles (tiles . _map . zone $ w)
+                in return $ Pictures $ tilerenders:(renderPlayer (player w) (time w)):erenders
