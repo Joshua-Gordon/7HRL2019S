@@ -51,3 +51,21 @@ renderTiles ts = let w = length ts
                      pics = [[ renderTile (ts!!col!!row) (_TILESIZE * fromIntegral col) (_TILESIZE * fromIntegral row) | row <- [0..h-1] ] | col <- [0..w-1]]
                  in  Pictures $ map Pictures pics
 
+expand :: Int -> [[Tile]] -> [[Tile]]
+expand factor ts = let w = length ts
+                       h = length (head ts)
+                   in [[ts !! (x `div` factor) !! (y `div` factor) | y <- [0..factor*h - 1]] | x <- [0..factor*w - 1]]
+
+erode :: [[Tile]] -> Picture -> [[Tile]]
+erode ts ft = let w = length ts
+                  h = length (head ts)
+              in [[ if neighbors x y ts > 3 then Floor ft else ts!!x!!y | y <- [0..h-1]] | x <- [0..w-1]]
+
+openCorners :: [[Tile]] -> Picture -> [[Tile]]
+openCorners ts ft = let w = length ts
+                        h = length (head ts)
+                    in [[ if neighbors x y ts == 3 then Floor ft else ts!!x!!y | y <- [0..h-1]] | x <- [0..w-1]]
+
+getSlice :: Int -> Int -> [[Tile]] -> [[Tile]]
+getSlice x y ts = let rows = map (drop y) ts
+                  in drop x rows
