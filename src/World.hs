@@ -37,7 +37,7 @@ updateWorld f w = let t =  time w
 tryMove :: World -> Dir -> Entity -> Entity
 tryMove w d e = if isFloor $ (tiles . _map . zone $ w) !! (fromIntegral x) !! (fromIntegral y) then e2 else e
   where
-    e2 = move e  d 1 
+    e2 = move e  d (time w) 
     (x,y) = position e2
 
 

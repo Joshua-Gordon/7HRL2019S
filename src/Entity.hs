@@ -1,6 +1,7 @@
 module Entity where
 
 import Data.Map as Map
+import Debug.Trace
 import Data.Maybe
 import Data.Fixed
 import System.Random
@@ -20,7 +21,7 @@ data Renderer = Static Picture
 
 draw :: Entity -> Float -> Picture
 draw ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
-                    (x,y) = position ent
+                    (x,y) =  position ent
                 in Translate (_TILESIZE * fromIntegral x) (_TILESIZE * fromIntegral y) rend
 
 drawDamage :: Entity -> Float -> Picture -> Picture
