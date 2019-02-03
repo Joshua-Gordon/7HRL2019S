@@ -76,3 +76,8 @@ parseAtk = (string "atk") *> fmap Atk ((string "" *> pure Nothing) <|>  string "
 parseLs = string "ls"  *> pure Ls
 parseSel = string "sel " *> (fmap Sel (munch (const True)))
 parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> munch (const True))
+
+handleInput :: Event -> Terminal -> IO Terminal
+handleInput e term = return case e of
+                        (EventKey (Char c) Up _ _) = term{buff=c:(head buff) : tail buff}
+                        _ -> term
