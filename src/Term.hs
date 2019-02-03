@@ -84,7 +84,7 @@ parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> mun
 handleInput :: Event -> Term -> IO Term
 handleInput e term = case e of
                             (EventKey (SpecialKey KeyEnter) Up _ _) -> process (head $ buff term) term
-                            (EventKey (SpecialKey KeyBackspace) Up _ _) -> return term{buff=(init . head . buff $ term) : tail (buff term)}
+                            (EventKey (SpecialKey KeySpace) Up _ _) -> return term{buff=((head $ buff term)++[' ']) : tail (buff term)}
                             (EventKey (Char c) Up _ _) -> if c == '\b' then doBackspace term else return term{buff=((head $ buff term)++[c]) : tail (buff term)}
                             _ -> return term
 
