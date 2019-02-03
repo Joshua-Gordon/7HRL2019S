@@ -5,10 +5,15 @@ import Data.Map as Map
 import Stats (Stats)
 import Slot (Slot)
 
+data WeaponClass = NotAWeapon | Melee | Ranged
+
 data Item = Item {
 	name :: String,
 	applyStats :: Stats -> Stats,
 	slotting :: [Slot],
+	weaponClass :: WeaponClass,
+	damageDie :: Integer,
+	damageBonus :: Integer,
 }
 
 data Stack = Stack {
