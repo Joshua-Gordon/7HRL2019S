@@ -27,7 +27,7 @@ main = do
     player <- getStartPlayer
     let zone = Zone {
         _map = map_,
-        entities = [rat,entity player]
+        entities = [rat]
     }
     let world1 = World {
         time = 0.0,

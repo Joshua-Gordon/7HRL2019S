@@ -32,3 +32,6 @@ getStartPlayer = do
                        name = "bobert",
                        entity=ent
                    }
+
+renderPlayer :: Player -> Float -> Picture
+renderPlayer p f = draw (entity p) f
