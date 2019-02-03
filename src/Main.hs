@@ -25,7 +25,7 @@ main = do
         _map = map_,
         entities = []
     }
-    let player = Player "bbrian"
+    player <- getStartPlayer
     let world = World {
         time = 0.0,
         zone = zone,
