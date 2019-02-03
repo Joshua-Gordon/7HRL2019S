@@ -58,11 +58,17 @@ handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{buff=addBuff "" (
     np = p{entity=ne}
     nw = w{player=np}
 handleCmd (Sel n) t = return $ clearBuff t{selected=n}
-handleCmd (Atk n) t = undefined
+handleCmd (Atk n) t = return nt
   where
     targName = maybe (selected t) id n :: String
     es = entities . zone . world $ t :: [Entity]
     targ = listToMaybe $ filter (\x -> ent_name  x == targName) es :: Maybe Entity
+    nes = filter (\x -> (fmap ent_name $ Just x) /= (fmap ent_name targ)) es
+    w = world t
+    z = zone w
+    nz = z{entities=nes}
+    nw = w{zone=nz}
+    nt = t{world=nw}
 
 showEnt :: Entity -> String
 showEnt e = show (position e)

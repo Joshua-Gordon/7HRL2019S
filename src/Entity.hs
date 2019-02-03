@@ -52,7 +52,7 @@ data Entity = Entity {
     lastMoveTime :: Float,
     lastDamageTime :: Float,
     curHP :: Integer
-}
+} 
 
 emptySlots :: Map Slot (Maybe Stack)
 emptySlots = let cm = singleton ControlModule Nothing

@@ -14,7 +14,7 @@ data Item = Item {
     weaponClass :: WeaponClass,
     damageDie :: Integer,
     damageBonus :: Integer
-}
+} 
 
 instance Eq Item where
     i == j = (name i) == (name j)

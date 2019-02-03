@@ -27,7 +27,7 @@ main = do
     let map_ = Map {
         tiles = er
     }
-    rat <- getRat (10,15)
+    rat <- getRat (2,0)
     player <- getStartPlayer
     let zone = Zone {
         _map = map_,
