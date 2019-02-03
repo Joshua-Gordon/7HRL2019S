@@ -41,8 +41,8 @@ main = do
 
 renderWorld :: Term -> IO Picture
 renderWorld t = let w = world t
-                    txt = buff t
-                    txtPic = translate (-360) (-240+20*i) . scale (0.3) (0.3) $ Pictures $ map text txt
+                    buf = buff t
+                    txtPic = Pictures [ translate (-360) (-240+30*i) . scale (0.3) (0.3) . text $ t | (line,i) <- zip buf [1..] ]
                     etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
                     tilerenders=renderTiles (tiles . _map . zone $ w)
