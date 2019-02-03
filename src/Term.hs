@@ -3,6 +3,7 @@ module Term where
 import Text.ParserCombinators.ReadP
 import Graphics.Gloss
 import World
+import Player
 import Entity
 import Zone
 import Dir
@@ -41,6 +42,14 @@ handleCmd :: Float -> Command -> Term -> IO Term
 handleCmd _ (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
 handleCmd f Nop t         = updateWorld f (world t) >>= (\w -> return t{world = w}) 
 handleCmd _ Ls t          = (sequence $ map (putStrLn . showEnt) (entities . zone . world $ t)) *> putStr "\n" *> return t
+handleCmd f (Move d) t    = updateWorld f nw >>= (\w -> return t{world = w})
+  where
+    w = world t
+    p = player w
+    e = entity p
+    ne = tryMove w d e
+    np = p{entity=ne}
+    nw = w{player=np}
 handleCmd _ _ t           = return t
 
 showEnt :: Entity -> String
