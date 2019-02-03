@@ -1,5 +1,5 @@
 module Dir where
-data Dir = U | D | L | R deriving(Show)
+data Dir = U | D | L | R deriving(Show, Ord, Eq)
 
 apply :: Dir -> (Integer, Integer) -> (Integer, Integer)
 apply U (a, b) = (a, b-1)
