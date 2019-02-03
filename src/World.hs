@@ -18,7 +18,7 @@ globalTranslate p = Translate (-_WIDTH/2) (-_HEIGHT/2) p
 renderWorld :: World -> IO Picture
 renderWorld w = let etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
-                in globalTranslate $ Pictures [erenders, renderTiles (tiles . zone $ w)]
+                in Pictures [erenders, renderTiles (tiles . zone $ w)]
 
 handleInput :: Event -> World -> IO World
 handleInput e = return
