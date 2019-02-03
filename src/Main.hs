@@ -37,12 +37,12 @@ main = do
         score = 0
     }
     let term = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" [] world1
-    playIO FullScreen white 1 term (renderWorld . world) (\e t -> (handleInput e t)) (tStep)
+    playIO FullScreen white 1 term renderWorld  (\e t -> (handleInput e t)) (tStep)
 
 renderWorld :: Term -> IO Picture
 renderWorld t = let w = world t
-                    txt = buff t
-                    txtPic = translate (-360) (-240+20*i) . scale (0.3) (0.3) $ Pictures $ map text txt
+                    buf = buff t
+                    txtPic = Pictures [ translate (-360) (-240+30*i) . scale (0.3) (0.3) . text $ line | (line,i) <- zip buf [1..] ]
                     etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
                     tilerenders=renderTiles (tiles . _map . zone $ w)
