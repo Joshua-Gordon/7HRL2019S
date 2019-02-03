@@ -3,6 +3,7 @@ module Slot where
 data Side = L | R deriving (Eq,Ord)
 
 data Slot = ControlModule
+    | Helmet
     | Armor
     | Torso
     | ArmAugment Side

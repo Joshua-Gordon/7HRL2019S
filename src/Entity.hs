@@ -6,6 +6,7 @@ import Data.Fixed
 import System.Random
 
 import Graphics.Gloss.Data.Picture
+import Graphics.Gloss
 
 import Item
 import Slot
@@ -52,7 +53,8 @@ data Entity = Entity {
 
 emptySlots :: Map Slot (Maybe Stack)
 emptySlots = let cm = singleton ControlModule Nothing
-                 ar = insert Armor Nothing cm
+                 hm = insert Helmet Nothing cm
+                 ar = insert Armor Nothing hm
                  to = insert Torso Nothing ar
                  aal= insert (ArmAugment Slot.L) Nothing to
                  aar = insert (ArmAugment Slot.R) Nothing aal
@@ -83,6 +85,9 @@ getEmptyEntity pos r = Entity {
     lastDamageTime = 0.0,
     curHP = 10 
 }
+
+pickup :: Entity -> Stack -> Entity
+pickup e s = e{inventory=addStack (inventory e) s}
 
 interpolating :: Float -> Entity -> Bool
 interpolating t e = t < (lastMoveTime e) + Consts.moveInterpTime
