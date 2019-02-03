@@ -5,11 +5,11 @@ import System.Random
 
 import Entity
 import Consts
+import Map
 
-data Tile = Floor Picture | Wall deriving Eq
 
 data Zone = Zone {
-    tiles :: [[Tile]],
+    _map :: Map,
     entities :: [Entity]
 }
 
@@ -45,7 +45,7 @@ renderTiles :: [[Tile]] -> Picture
 renderTiles ts = let w = length ts
                      h = length (head ts)
                      pics = [[ renderTile (ts!!col!!row) (_TILESIZE * fromIntegral col) (_TILESIZE * fromIntegral row) | row <- [0..h-1] ] | col <- [0..w-1]]
-                 in  Pictures $ map Pictures pics
+                 in  Pictures $ Prelude.map Pictures pics
 
 expand :: Int -> [[Tile]] -> [[Tile]]
 expand factor ts = let w = length ts
@@ -63,5 +63,5 @@ openCorners ts ft = let w = length ts
                     in [[ if neighbors x y ts == 3 then Floor ft else ts!!x!!y | y <- [0..h-1]] | x <- [0..w-1]]
 
 getSlice :: Int -> Int -> [[Tile]] -> [[Tile]]
-getSlice x y ts = let rows = map (drop y) ts
+getSlice x y ts = let rows = Prelude.map (drop y) ts
                   in drop x rows

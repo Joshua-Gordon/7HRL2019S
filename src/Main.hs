@@ -3,6 +3,7 @@ import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
 import Zone
+import Map
 import World
 import Player
 
@@ -17,8 +18,11 @@ main = do
     let er = erode thiccts d
     let x = 20
     let y = 30
+    let map_ = Map {
+        tiles = er
+    }
     let zone = Zone {
-        tiles = er,
+        _map = map_,
         entities = []
     }
     let player = Player "bbrian"
