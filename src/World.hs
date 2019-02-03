@@ -4,6 +4,7 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 
 import Zone
+import Dir
 import Map
 import Player
 import Consts
@@ -30,3 +31,12 @@ handleInput e = return
 updateWorld :: Float -> World -> IO World
 updateWorld f w = let t =  time w
                   in return w{time=t+f}
+
+tryMove :: World -> Dir -> Entity -> Entity
+tryMove w d e = if isFloor $ (tiles . _map . zone $ w) !! (fromIntegral x) !! (fromIntegral y) then e2 else e
+  where
+    e2 = move e  d 1 
+    (x,y) = position e2
+
+
+
