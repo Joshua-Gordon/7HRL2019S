@@ -42,7 +42,7 @@ handleCmd :: Float -> Command -> Term -> IO Term
 handleCmd _ (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
 handleCmd f Nop t         = updateWorld f (world t) >>= (\w -> return t{world = w}) 
 handleCmd _ Ls t          = (sequence $ map (putStrLn . showEnt) (entities . zone . world $ t)) *> putStr "\n" *> return t
-handleCmd f (Move d) t    = updateWorld f nw >>= (\w -> return t{world = w})
+handleCmd f (Move d) t    = print ((position ne,time w,lastMoveTime ne)) *> updateWorld f nw >>= (\w -> return t{world = w})
   where
     w = world t
     p = player w
