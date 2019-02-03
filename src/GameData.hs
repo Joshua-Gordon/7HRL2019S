@@ -22,6 +22,6 @@ getRat :: (Integer,Integer) -> IO Entity
 getRat pos = do
                r <- loadBMP "../res/ratR.bmp"
                l <- loadBMP "../res/ratL.bmp"
-               let e = getEmptyEntity pos (SimpleCycle r l)
+               let e = getEmptyEntity "rat" pos (SimpleCycle r l)
                return $ pickup e Stack {item=goComp,amount=1}
                

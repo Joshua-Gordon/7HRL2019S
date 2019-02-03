@@ -46,10 +46,10 @@ process s t = maybe (return t{buff=addBuff "" . addBuff err $ (buff t)}) (flip h
     err = "error " ++ s ++ " not a valid command"
 
 handleCmd :: Command -> Term -> IO Term
-handleCmd (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
-handleCmd Nop t         = updateWorld 0 (world t) >>= (\w -> return t{world = w}) 
-handleCmd Ls t          = return t{buff=(thicAddBuff (map showEnt (entities . zone . world $ t)) (buff t) )}
-handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{buff=addBuff " " (buff t),world = w})
+handleCmd (Alias a b) t = return $ clearBuff t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
+handleCmd Nop t         = updateWorld 0 (world t) >>= (\w -> return $ clearBuff t{world = w}) 
+handleCmd Ls t          = return $ clearBuff t{buff=(thicAddBuff (map ent_name (entities . zone . world $ t)) (buff t) )}
+handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{buff=addBuff "" (buff t),world = w})
   where
     w = world t
     p = player w
@@ -57,7 +57,12 @@ handleCmd (Move d) t    = updateWorld 0 nw >>= (\w -> return t{buff=addBuff " " 
     ne = tryMove w d e
     np = p{entity=ne}
     nw = w{player=np}
-handleCmd _ t           = return t
+handleCmd (Sel n) t = return $ clearBuff t{selected=n}
+handleCmd (Atk n) t = undefined
+  where
+    targName = maybe (selected t) id n :: String
+    es = entities . zone . world $ t :: [Entity]
+    targ = listToMaybe $ filter (\x -> ent_name  x == targName) es :: Maybe Entity
 
 showEnt :: Entity -> String
 showEnt e = show (position e)

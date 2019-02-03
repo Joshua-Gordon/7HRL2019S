@@ -43,6 +43,7 @@ drawRenderer (Oriented dirMap dflt) ent time = let
     in drawRenderer rnd ent time
 
 data Entity = Entity {
+    ent_name :: String, --this should be unique
     position :: (Integer, Integer),
     inventory :: Item.Inv,
     equipped :: Map.Map Slot.Slot (Maybe Item.Stack),
@@ -74,8 +75,9 @@ emptySlots = let cm = singleton ControlModule Nothing
              in btr
                   
 
-getEmptyEntity :: (Integer,Integer) -> Renderer -> Entity
-getEmptyEntity pos r = Entity {
+getEmptyEntity :: String -> (Integer,Integer) -> Renderer -> Entity
+getEmptyEntity nm pos r = Entity {
+    ent_name = nm,
     position = pos,
     inventory = Inv {
                     stacks = Map.empty
