@@ -66,5 +66,5 @@ parseNop = string "wait" *> pure Nop
 parseAtk = (string "atk") *> fmap Atk ((string "" *> pure Nothing) <|>  string " " *> fmap Just (munch (const True)))
 parseLs = string "ls"  *> pure Ls
 parseSel = string "sel " *> (fmap Sel (munch (const True)))
-parseAlias = string "alias " *> liftA2 Alias (munch (/= ' ')) (string " " *> munch (/= ' '))
+parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> munch (const True))
 
