@@ -19,25 +19,23 @@ data Term = Term {
   world :: World
 } deriving (Show)
 
-update :: Float -> Term -> IO Term
-update _ = step
-
 addBuff :: String -> [String] -> [String]
 addBuff s b = take 20 (s:b)
 
-step :: Term -> IO Term
-step t = (putStr (prompt t)) *> getLine >>= (return . flip process t)
+step :: Float -> Term -> IO Term
+step f t = (putStr (prompt t)) *> getLine >>= flip (process f) t
 
 def :: Term
 def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []
 
-process :: String -> Term -> Term
-process s t = maybe t{buff=addBuff ("error " ++ s ++ "not a valid command") (buff t)} (flip handleCmd t) cmd
+process :: Float -> String -> Term -> IO Term
+process f s t = maybe (return t{buff=addBuff ("error " ++ s ++ "not a valid command") (buff t)}) (flip (handleCmd f) t) cmd
   where
     cmd = parse (doAliases (aliases t) s)
 
-handleCmd :: Command -> Term -> Term
-handleCmd (Alias a b) t = t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
+handleCmd :: Float -> Command -> Term -> IO Term
+handleCmd _ (Alias a b) t = t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
+handleCmd f Nop t = updateWorld f (world t) >>= (\w -> t{world = w}) 
 handleCmd _ t = t
 
 doAliases :: [(String,String)] -> String -> String
