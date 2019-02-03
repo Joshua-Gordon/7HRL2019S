@@ -19,10 +19,9 @@ data Renderer = Static Picture
     | SimpleCycle Picture Picture
     | Oriented (Map.Map Dir.Dir Renderer) Renderer
 
-draw :: Entity -> Float -> Picture
-draw ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
-                    (x,y) =  position ent
-                in Translate (_TILESIZE * fromIntegral x) (_TILESIZE * fromIntegral y) rend
+draw :: (Integer,Integer) -> Entity -> Float -> Picture
+draw (x,y) ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
+                in Translate (_TILESIZE * fromIntegral (-x)) (_TILESIZE * fromIntegral (-y)) rend
 
 drawDamage :: Entity -> Float -> Picture -> Picture
 drawDamage ent time rend = let

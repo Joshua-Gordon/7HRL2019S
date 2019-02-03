@@ -29,11 +29,11 @@ getStartPlayer = do
                    let right = SimpleCycle rl rr
                    let renderMap = insert D front $ insert L left $ insert R right $ singleton U back
                    let renderer = Oriented renderMap front
-                   let ent = getEmptyEntity (5,5) renderer
+                   let ent = getEmptyEntity (0,0) renderer
                    return Player {
                        name = "bobert",
                        entity=ent
                    }
 
 renderPlayer :: Player -> Float -> Picture
-renderPlayer p f = traceShow (position . entity $ p) draw (entity p) f
+renderPlayer p f = drawDamage (entity p) f $ drawRenderer (renderer . entity $ p) (entity p) f
