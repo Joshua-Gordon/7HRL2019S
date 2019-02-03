@@ -1,7 +1,10 @@
 module Term where
 
 import Text.ParserCombinators.ReadP
+import Graphics.Gloss
 import World
+import Entity
+import Zone
 import Dir
 import Data.Maybe
 import Data.List
@@ -15,28 +18,33 @@ data Term = Term {
   buff :: [String],
   prompt :: String,
   selected :: String,
-  aliases :: [(String,String)]
+  aliases :: [(String,String)],
   world :: World
-} deriving (Show)
+} 
 
 addBuff :: String -> [String] -> [String]
 addBuff s b = take 20 (s:b)
 
-step :: Float -> Term -> IO Term
-step f t = (putStr (prompt t)) *> getLine >>= flip (process f) t
+tStep :: Float -> Term -> IO Term
+tStep f t = (putStr (prompt t)) *> getLine >>= flip (process f) t
 
-def :: Term
-def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []
+-- def :: Term
+-- def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []
 
 process :: Float -> String -> Term -> IO Term
-process f s t = maybe (return t{buff=addBuff ("error " ++ s ++ "not a valid command") (buff t)}) (flip (handleCmd f) t) cmd
+process f s t = maybe (print err *> return t{buff=addBuff err (buff t)}) (flip (handleCmd f) t) cmd
   where
     cmd = parse (doAliases (aliases t) s)
+    err = "error " ++ s ++ " not a valid command"
 
 handleCmd :: Float -> Command -> Term -> IO Term
-handleCmd _ (Alias a b) t = t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
-handleCmd f Nop t = updateWorld f (world t) >>= (\w -> t{world = w}) 
-handleCmd _ t = t
+handleCmd _ (Alias a b) t = return $ t{aliases = (a,b):(aliases t),buff=addBuff "alias created sucesfully" (buff t)}
+handleCmd f Nop t         = updateWorld f (world t) >>= (\w -> return t{world = w}) 
+handleCmd _ Ls t          = (sequence $ map (putStrLn . showEnt) (entities . zone . world $ t)) *> putStr "\n" *> return t
+handleCmd _ _ t           = return t
+
+showEnt :: Entity -> String
+showEnt e = show (position e)
 
 doAliases :: [(String,String)] -> String -> String
 doAliases [] = id
