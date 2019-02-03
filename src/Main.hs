@@ -8,6 +8,7 @@ import Map
 import World
 import Player
 
+import GameData
 
 main :: IO ()
 main = do
@@ -22,11 +23,12 @@ main = do
     let map_ = Map {
         tiles = er
     }
+    rat <- getRat (10,15)
+    player <- getStartPlayer
     let zone = Zone {
         _map = map_,
-        entities = []
+        entities = [rat,entity player]
     }
-    player <- getStartPlayer
     let world1 = World {
         time = 0.0,
         zone = zone,
