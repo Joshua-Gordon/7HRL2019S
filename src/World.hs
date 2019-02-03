@@ -21,9 +21,6 @@ globalTranslate :: Picture -> Picture
 globalTranslate p = Translate ((fromIntegral $ -_WIDTH)/2) ((fromIntegral $ -_HEIGHT)/2) p
 
 
-handleInput :: Event -> World -> IO World
-handleInput e = return
-
 updateWorld :: Float -> World -> IO World
 updateWorld f w = let t =  time w
                   in return w{time=t+f}

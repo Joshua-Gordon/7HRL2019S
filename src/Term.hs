@@ -12,6 +12,7 @@ import Data.List
 import Data.Function
 import Control.Monad
 import Control.Applicative
+import Graphics.Gloss.Interface.IO.Game
 
 data Command = Move Dir | Atk (Maybe String) | Ls | Sel String | Alias String String | Nop deriving(Show)
 
@@ -77,7 +78,7 @@ parseLs = string "ls"  *> pure Ls
 parseSel = string "sel " *> (fmap Sel (munch (const True)))
 parseAlias = string "alias " *> liftA2 Alias (munch (/= '=')) (string "=" *> munch (const True))
 
-handleInput :: Event -> Terminal -> IO Terminal
+handleInput :: Event -> Term -> IO Term
 handleInput e term = return $ case e of
-                                (EventKey (Char c) Up _ _) -> term{buff=c:(head buff) : tail buff}
+                                (EventKey (Char c) Up _ _) -> term{buff=(c:(head $ buff term)) : tail (buff term)}
                                 _ -> term
