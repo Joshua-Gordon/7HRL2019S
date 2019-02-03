@@ -31,8 +31,6 @@ handleInput e = return
 
 updateWorld :: Float -> World -> IO World
 updateWorld f w = let t =  time w
-                      ents = entities . zone $ w
-
                   in return w{time=t+f}
 
 tryMove :: World -> Dir -> Entity -> Entity
