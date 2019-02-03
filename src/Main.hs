@@ -2,6 +2,8 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
+import Debug.Trace
+
 import Term
 import Entity
 import Zone
@@ -9,6 +11,7 @@ import Map
 import World
 import Player
 
+import Consts
 import GameData
 
 main :: IO ()
@@ -44,6 +47,9 @@ renderWorld t = let w = world t
                     buf = buff t
                     txtPic = Pictures [ translate (-360) (-240+30*i) . scale (0.3) (0.3) . text $ line | (line,i) <- zip buf [1..] ]
                     etts = entities . zone $ w
-                    erenders = [draw e (time w) | e <- etts]
-                    tilerenders=renderTiles (tiles . _map . zone $ w)
+                    erenders = [draw (traceShowId $ position . entity . player $ w) e (time w) | e <- etts]
+                    (x,y) = position . entity . player $ w
+                    tilerenders=Translate (_TILESIZE * fromIntegral (-x)) (_TILESIZE * fromIntegral (-y)) $ renderTiles (tiles . _map . zone $ w)
                 in return $ Pictures $ (tilerenders:(renderPlayer (player w) (time w)):erenders) ++ [txtPic]
+
+

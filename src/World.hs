@@ -17,8 +17,12 @@ data World = World { --ZA WARUDO
     score :: Integer
 }
 
-globalTranslate :: Picture -> Picture
-globalTranslate p = Translate ((fromIntegral $ -_WIDTH)/2) ((fromIntegral $ -_HEIGHT)/2) p
+globalTranslate :: World -> Picture -> Picture
+globalTranslate w p = let pl = player w
+                          (x,y) = position . entity $ pl
+                          dx = (*) _TILESIZE $ fromIntegral x - (fromIntegral _WIDTH)/2
+                          dy = (*) _TILESIZE $ fromIntegral y - (fromIntegral _HEIGHT)/2
+                      in Translate dx dy p
 
 
 updateWorld :: Float -> World -> IO World
