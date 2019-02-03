@@ -37,7 +37,7 @@ main = do
         score = 0
     }
     let term = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" [] world1
-    playIO Fullscreen white 1 term (renderWorld . world) (\e t -> ( ((handleInput e (world t)) >>= (\w -> return t{world = w})))) (tStep)
+    playIO FullScreen white 1 term (renderWorld . world) (\e t -> (handleInput e t)) (tStep)
 
 renderWorld :: Term -> IO Picture
 renderWorld t = let w = world t
