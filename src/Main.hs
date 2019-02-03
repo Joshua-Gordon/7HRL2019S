@@ -17,19 +17,15 @@ main = do
     let er = erode thiccts d
     let x = 20
     let y = 30
-
     let zone = Zone {
         tiles = er,
         entities = []
     }
-
     let player = Player "bbrian"
-    
     let world = World {
         time = 0.0,
         zone = zone,
         player = player,
         score = 0
     }
-
-    playIO (InWindow "7HRL!" (720,480) (400,400)) white world renderWorld handleInput updateWorld
+    playIO (InWindow "7HRL!" (720,480) (400,400)) white 1 world renderWorld handleInput updateWorld

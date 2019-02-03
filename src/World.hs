@@ -1,5 +1,8 @@
 module World where
 
+import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
+
 import Zone
 import Player
 import Consts
@@ -13,12 +16,12 @@ data World = World { --ZA WARUDO
 }
 
 globalTranslate :: Picture -> Picture
-globalTranslate p = Translate (-_WIDTH/2) (-_HEIGHT/2) p
+globalTranslate p = Translate ((fromIntegral $ -_WIDTH)/2) ((fromIntegral $ -_HEIGHT)/2) p
 
 renderWorld :: World -> IO Picture
 renderWorld w = let etts = entities . zone $ w
                     erenders = [draw e (time w) | e <- etts]
-                in Pictures [erenders, renderTiles (tiles . zone $ w)]
+                in return $ Pictures $ erenders ++[renderTiles (tiles . zone $ w)]
 
 handleInput :: Event -> World -> IO World
 handleInput e = return
