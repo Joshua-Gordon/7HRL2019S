@@ -34,7 +34,8 @@ addBuff :: String -> [String] -> [String]
 addBuff s b = take 5 (s:b)
 
 tStep :: Float -> Term -> IO Term
-tStep = const return
+tStep tm tr = let w = world tr
+	in return tr{world = w{time = (time w) + tm}}
 
 -- def :: Term
 -- def = Term ["Welcome to Vent Crawler 2 (No Relation)"] "you@game:~$" "" []

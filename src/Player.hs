@@ -36,4 +36,4 @@ getStartPlayer = do
                    }
 
 renderPlayer :: Player -> Float -> Picture
-renderPlayer p f = drawDamage (entity p) f $ drawRenderer (renderer . entity $ p) (entity p) f
+renderPlayer p f = draw (entity p) f

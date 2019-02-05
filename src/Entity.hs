@@ -19,9 +19,16 @@ data Renderer = Static Picture
     | SimpleCycle Picture Picture
     | Oriented (Map.Map Dir.Dir Renderer) Renderer
 
-draw :: (Integer,Integer) -> Entity -> Float -> Picture
-draw (x,y) ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
-                in Translate (_TILESIZE * fromIntegral (-x)) (_TILESIZE * fromIntegral (-y)) rend
+draw :: Entity -> Float -> Picture
+draw ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
+                    (ix, iy) = position ent
+                    (ilx, ily) = lastPos ent
+                    (x, y) = (fromIntegral ix, fromIntegral iy) :: (Float, Float)
+                    (lx, ly) = (fromIntegral ilx, fromIntegral ily) :: (Float, Float)
+                    u = ((lastMoveTime ent) + moveInterpTime - time) / moveInterpTime
+                    rx = if u > 0.0 then u * lx + (1.0 - u) * x else x
+                    ry = if u > 0.0 then u * ly + (1.0 - u) * y else y
+                in Translate (_TILESIZE * rx) (_TILESIZE * ry) rend
 
 drawDamage :: Entity -> Float -> Picture -> Picture
 drawDamage ent time rend = let
@@ -49,6 +56,7 @@ data Entity = Entity {
     innateStats :: Stats.Stats,
     renderer :: Renderer,
     lastMoveDir :: Dir.Dir,
+	lastPos :: (Integer, Integer),
     lastMoveTime :: Float,
     lastDamageTime :: Float,
     curHP :: Integer
@@ -85,6 +93,7 @@ getEmptyEntity nm pos r = Entity {
     innateStats = baseStats,
     renderer = r,
     lastMoveDir = D,
+    lastPos = pos,
     lastMoveTime = 0.0,
     lastDamageTime = 0.0,
     curHP = 10 
@@ -101,7 +110,7 @@ stats e = let items = Prelude.map (Item.applyStats . Item.item) $ catMaybes . el
           in Prelude.foldl (.) id items $ innateStats e
 
 move :: Entity -> Dir.Dir -> Float -> Entity
-move e d t = e{lastMoveDir = d, lastMoveTime = t, position = Dir.apply d $ position e}
+move e d t = e{lastMoveDir = d, lastMoveTime = t, lastPos = position e, position = Dir.apply d $ position e}
 
 isDead :: Entity -> Bool
 isDead e = (curHP e) <= 0
