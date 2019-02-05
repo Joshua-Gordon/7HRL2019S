@@ -8,13 +8,13 @@ data Stats = Stats {
    _DEX :: Integer,
    _INT :: Integer,
    _VIS :: Integer
-}
+} deriving Show
 
 baseStats :: Stats
 baseStats = Stats {
    _HP = 10,
    _AC = 10,
-   _DEF = 10,
+   _DEF = 0,
    _STR = 10,
    _DEX = 10,
    _INT = 10,

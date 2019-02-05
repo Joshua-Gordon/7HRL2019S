@@ -13,6 +13,8 @@ import Data.Function
 import Control.Monad
 import Control.Applicative
 import Graphics.Gloss.Interface.IO.Game
+import System.Random
+import System.IO.Unsafe
 
 data Command = Move Dir | Atk (Maybe String) | Ls | Sel String | Alias String String | Nop deriving(Show)
 
@@ -64,12 +66,17 @@ handleCmd (Atk n) t = return nt
     targName = maybe (selected t) id n :: String
     es = entities . zone . world $ t :: [Entity]
     targ = listToMaybe $ filter (\x -> ent_name  x == targName) es :: Maybe Entity
-    nes = filter (\x -> (fmap ent_name $ Just x) /= (fmap ent_name targ)) es
-    w = world t
-    z = zone w
-    nz = z{entities=nes}
-    nw = w{zone=nz}
-    nt = t{world=nw}
+    newtarg = fmap (\te -> attack (unsafePerformIO newStdGen) (entity . player . world $ t) te Nothing (time . world $ t)) targ
+    nt = case newtarg of
+        Just (atk, def, dmg, _) -> let
+            w = world t
+            p = player w
+            z = zone w
+            nz = z{entities=[if ent_name x == targName then def else x | x <- (entities z)]}
+            nw = w{zone=nz, player=p{entity = atk}}
+            nt = t{world=nw, buff = addBuff "" $ addBuff ("attacked " ++ targName ++ " for " ++ (show dmg) ++ " damage; now " ++ (show $ curHP def) ++ " HP") (buff t)}
+            in nt
+        Nothing -> t{buff = addBuff "" $ addBuff "No target." (buff t)}
 
 showEnt :: Entity -> String
 showEnt e = show (position e)

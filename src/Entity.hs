@@ -20,7 +20,7 @@ data Renderer = Static Picture
     | Oriented (Map.Map Dir.Dir Renderer) Renderer
 
 draw :: Entity -> Float -> Picture
-draw ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent time
+draw ent time = let rend = drawDead ent $ drawDamage ent time $ drawRenderer (renderer ent) ent time
                     (ix, iy) = position ent
                     (ilx, ily) = lastPos ent
                     (x, y) = (fromIntegral ix, fromIntegral iy) :: (Float, Float)
@@ -29,6 +29,9 @@ draw ent time = let rend = drawDamage ent time $ drawRenderer (renderer ent) ent
                     rx = if u > 0.0 then u * lx + (1.0 - u) * x else x
                     ry = if u > 0.0 then u * ly + (1.0 - u) * y else y
                 in Translate (_TILESIZE * rx) (_TILESIZE * ry) rend
+
+drawDead :: Entity -> Picture -> Picture
+drawDead e p = if isDead e then Rotate 180.0 p else p
 
 drawDamage :: Entity -> Float -> Picture -> Picture
 drawDamage ent time rend = let
@@ -42,7 +45,7 @@ drawRenderer (SimpleCycle a b) ent time = let
     baseTime = if (interpolating time ent) then movingWalkCycleTime else walkCycleTime
     doubleTime = 2.0 * baseTime
     phase = time `mod'` doubleTime
-    in if phase < baseTime then a else b
+    in if (isDead ent) || phase < baseTime then a else b
 drawRenderer (Oriented dirMap dflt) ent time = let
     dir = lastMoveDir ent
     rnd = Map.findWithDefault dflt dir dirMap
@@ -115,31 +118,39 @@ move e d t = e{lastMoveDir = d, lastMoveTime = t, lastPos = position e, position
 isDead :: Entity -> Bool
 isDead e = (curHP e) <= 0
 
-attack :: StdGen -> Entity -> Entity -> Maybe Item.Stack -> Float -> (Entity, Entity, StdGen)
+tracePrint :: Show a => String -> a -> a
+tracePrint m a = trace (m ++ show a) a
+
+attack :: StdGen -> Entity -> Entity -> Maybe Item.Stack -> Float -> (Entity, Entity, Integer, StdGen)
 attack rand attacker defender weapon time = let
-    (basetohit, rand2) = randomR Consts.toHitDie rand
-    (ranged, improv) = case weapon of
+    (basetohit_, rand2) = randomR Consts.toHitDie rand
+    basetohit = tracePrint "baseToHit: " basetohit_
+    (ranged_, improv_) = case weapon of
         Nothing -> (False, True)
         Just stk -> case Item.weaponClass $ Item.item stk of
             Item.Ranged -> (True, False)
             Item.Melee -> (False, False)
             Item.NotAWeapon -> (False, True)
-    ast = stats attacker
-    dst = stats defender
-    bonus = (if ranged then Stats._DEX ast else Stats._STR ast)
-    tohit = basetohit - (if improv then Consts.improvPenalty else 0) + bonus
-    dmgdie = case weapon of
+    (ranged, improv) = tracePrint "ranged, improv: " (ranged_, improv_)
+    ast = tracePrint "attacker stats: " $ stats attacker
+    dst = tracePrint "defender stats: " $ stats defender
+    bonus = tracePrint "bonus: " $(if ranged then Stats._DEX ast else Stats._STR ast)
+    tohit = tracePrint "toHit: " $ basetohit - (if improv then Consts.improvPenalty else 0) + bonus
+    dmgdie = tracePrint "dmgdie: " $ case weapon of
         Nothing -> Consts.improvDamageDie
         Just stk -> Item.damageDie $ Item.item stk
-    dmgbon = case weapon of
+    dmgbon = tracePrint "dmgbon: " $ case weapon of
         Nothing -> Consts.improvDamageBonus
         Just stk -> Item.damageBonus $Item.item stk
-    (dmgbase, rand3) = randomR (1, dmgdie) rand2
-    dmg = dmgbase + dmgbon - Stats._DEF dst
-    in if tohit < (Stats._AC dst) || dmg < 0
-        then (attacker, defender, rand3)
+    (dmgbase_, rand3) = randomR (1, dmgdie) rand2
+    dmgbase = tracePrint "dmgbase: " dmgbase_
+    dmg = tracePrint "dmg: " $ dmgbase + dmgbon - Stats._DEF dst
+    ac = tracePrint "defender AC: " $ (Stats._AC dst)
+    in if tohit < ac || dmg < 0
+        then (attacker, defender, 0, rand3)
         else (
             attacker,
-            defender{curHP = (curHP defender) - dmg, lastDamageTime = time},
+            defender{curHP = max ((curHP defender) - dmg) 0, lastDamageTime = time},
+            dmg,
             rand3
         )
